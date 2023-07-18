@@ -31,6 +31,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+*.xcworkspacedata
+contents.xcworkspacedata
 
 # Symbolication related
 app.*.symbols

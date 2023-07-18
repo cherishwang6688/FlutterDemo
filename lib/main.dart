@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _loading = true;
     });
-
+    postPreLoginDID();
     try {
       final client = Provider.of<Client>(context, listen: false);
       await client
@@ -80,6 +82,16 @@ class _LoginPageState extends State<LoginPage> {
         _loading = false;
       });
     }
+  }
+
+  void postPreLoginDID() async {
+    final client = Provider.of<Client>(context, listen: false);
+    var response = await client.postPreLoginDID(
+        did: "did:sdn:0db058993cf429b9bf3b84904e597b098ee60573");
+    print("response.did= ${response.did}");
+    print("response.did= ${response.did}");
+    print("response.did= ${response.did}");
+    print("response.did= ${response.did}");
   }
 
   @override
