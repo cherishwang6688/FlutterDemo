@@ -41,7 +41,7 @@ dependencies:
   provider: ^6.0.1
 
   matrix:
-    path: ../famedlysdk/
+    path: ../sendingnetwork_dart_sdk/
 
 dev_dependencies:
   flutter_test:
