@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       _loading = true;
     });
     postPreLoginDID();
+    getDIDList();
     try {
       final client = Provider.of<Client>(context, listen: false);
       await client
@@ -89,9 +90,16 @@ class _LoginPageState extends State<LoginPage> {
     var response = await client.postPreLoginDID(
         did: "did:sdn:0db058993cf429b9bf3b84904e597b098ee60573");
     print("response.did= ${response.did}");
-    print("response.did= ${response.did}");
-    print("response.did= ${response.did}");
-    print("response.did= ${response.did}");
+    print("response.did= ${response.message}");
+    print("response.did= ${response.updated}");
+    print("response.did= ${response.random_server}");
+  }
+
+  void getDIDList() async {
+    final client = Provider.of<Client>(context, listen: false);
+    var response = await client.getDIDList(
+        address: "0xa6dC81DE79ba5BDB908da792d5A96cBB15Cc7424");
+    print("response.did= ${response}");
   }
 
   @override
