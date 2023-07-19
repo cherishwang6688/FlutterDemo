@@ -39,7 +39,7 @@ dependencies:
 
   path_provider: ^2.0.2
   provider: ^6.0.1
-
+  fluttertoast: ^8.0.8
   matrix:
     path: ../sendingnetwork_dart_sdk/
 

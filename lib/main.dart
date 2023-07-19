@@ -1,9 +1,11 @@
-import 'dart:math';
+import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,8 +60,9 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _loading = true;
     });
-    postPreLoginDID();
-    getDIDList();
+    // postPreLoginDID();
+    // getDIDList();
+    postLoginDId();
     try {
       final client = Provider.of<Client>(context, listen: false);
       await client
@@ -89,17 +92,65 @@ class _LoginPageState extends State<LoginPage> {
     final client = Provider.of<Client>(context, listen: false);
     var response = await client.postPreLoginDID(
         did: "did:sdn:0db058993cf429b9bf3b84904e597b098ee60573");
-    print("response.did= ${response.did}");
-    print("response.did= ${response.message}");
-    print("response.did= ${response.updated}");
-    print("response.did= ${response.random_server}");
+    print("postPreLoginDID response.did= ${response.did}");
+    print("postPreLoginDID response.message= ${response.message}");
+    print("postPreLoginDID response.updated= ${response.updated}");
+    print("postPreLoginDID random_server= ${response.random_server}");
+    showToast("postPreLoginDID接口did=:${response.did}");
   }
 
   void getDIDList() async {
     final client = Provider.of<Client>(context, listen: false);
-    var response = await client.getDIDList(
+    SDNDIDListResponse response = await client.getDIDList(
         address: "0xa6dC81DE79ba5BDB908da792d5A96cBB15Cc7424");
-    print("response.did= ${response}");
+    print("getDIDList response.did= ${response.data}");
+    showToast("getDIDList接口did=:${response.data[0]}");
+  }
+
+  void postLoginDId() async {
+    final client = Provider.of<Client>(context, listen: false);
+
+    Map<String, dynamic> jsonData = {
+      "did": "did:sdn:a6dc81de79ba5bdb908da792d5a96cbb15cc7424",
+      "address": "did:sdn:a6dc81de79ba5bdb908da792d5a96cbb15cc7424",
+      "token":
+          "0x4326f122f1d0777343812ab2a4b1a3ca466fd781ed245cb735e68efb9867e7f35943b46a9a0f7c1061139294c3806f0f63df71b7c55996a6f7a1101390b47d081b",
+      "message":
+          "Login with this account\n\ntime: 2023-07-19T07:18:55Z\n877193042b68b5e93ead141e5b1d37e4140649bd3bc2f3e485f0e84aeb20d460\n2834949983173196185_5SmGRrUN"
+    };
+
+    print("jsonString $jsonData");
+
+    try {
+      var response = await client.postLoginDId(
+        type: "m.login.did.identity",
+        updated: "2023-07-19T07:18:55Z",
+        identifier: jsonData,
+        random_server: "2834949983173196185_5SmGRrUN",
+      );
+
+      print("postLoginDId response.access_token= ${response.access_token}");
+      print("postLoginDId response.device_id= ${response.device_id}");
+      print("postLoginDIdresponse.user_id= ${response.user_id}");
+      showToast(
+          "postLoginDId接口did=:${response.user_id} ${response.error} ${response.errorcode}  ");
+    } catch (e) {
+      print('Exception caught: $e');
+      showToast('Exception caught: $e');
+    }
+  }
+
+  void showToast(String text) {
+    Fluttertoast.showToast(
+      msg: text,
+      toastLength:
+          Toast.LENGTH_LONG, // 可选参数，可以是Toast.LENGTH_SHORT或Toast.LENGTH_LONG
+      gravity: ToastGravity
+          .BOTTOM, // 可选参数，可以是ToastGravity.TOP、ToastGravity.CENTER或ToastGravity.BOTTOM
+      backgroundColor: Colors.grey, // 可选参数，自定义背景颜色
+      textColor: Colors.white, // 可选参数，自定义文本颜色
+      fontSize: 13.0, // 可选参数，自定义文本大小
+    );
   }
 
   @override
@@ -148,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _loading ? null : _login,
                 child: _loading
                     ? const LinearProgressIndicator()
-                    : const Text('Login'),
+                    : const Text('http test begin'),
               ),
             ),
           ],
@@ -252,7 +303,6 @@ class RoomPage extends StatefulWidget {
 class _RoomPageState extends State<RoomPage> {
   late final Future<Timeline> _timelineFuture;
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  int _count = 0;
 
   @override
   void initState() {
@@ -262,10 +312,8 @@ class _RoomPageState extends State<RoomPage> {
     }, onInsert: (i) {
       print('on insert! $i');
       _listKey.currentState?.insertItem(i);
-      _count++;
     }, onRemove: (i) {
       print('On remove $i');
-      _count--;
       _listKey.currentState?.removeItem(i, (_, __) => const ListTile());
     }, onUpdate: () {
       print('On update');
@@ -299,7 +347,6 @@ class _RoomPageState extends State<RoomPage> {
                       child: CircularProgressIndicator.adaptive(),
                     );
                   }
-                  _count = timeline.events.length;
                   return Column(
                     children: [
                       Center(
