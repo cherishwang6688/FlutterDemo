@@ -10,15 +10,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+//  databaseBuilder: (_) async {
+//     final dir = await getApplicationSupportDirectory();
+//     final db = HiveCollectionsDatabase('matrix_example_chat', dir.path);
+//     await db.open();
+//     return db;
+//   }
   final client = Client(
     'Matrix Example Chat',
-    databaseBuilder: (_) async {
-      final dir = await getApplicationSupportDirectory();
-      final db = HiveCollectionsDatabase('matrix_example_chat', dir.path);
-      await db.open();
-      return db;
-    },
   );
+  client.sdnhomeserver = Uri.parse('https://beginner.sending.network');
   await client.init();
   runApp(MatrixExampleChat(client: client));
 }
@@ -211,7 +212,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
+/*
 class RoomListPage extends StatefulWidget {
   const RoomListPage({Key? key}) : super(key: key);
 
@@ -441,3 +442,5 @@ class _RoomPageState extends State<RoomPage> {
     );
   }
 }
+
+*/
