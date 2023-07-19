@@ -35,7 +35,8 @@ class MatrixExampleChat extends StatelessWidget {
         create: (context) => client,
         child: child,
       ),
-      home: client.isLogged() ? const RoomListPage() : const LoginPage(),
+      // home: client.isLogged() ? const RoomListPage() : const LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
@@ -56,39 +57,10 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _loading = false;
 
-  void _login() async {
+  void postPreLoginDID() async {
     setState(() {
       _loading = true;
     });
-    // postPreLoginDID();
-    // getDIDList();
-    postLoginDId();
-    try {
-      final client = Provider.of<Client>(context, listen: false);
-      await client
-          .checkHomeserver(Uri.https(_homeserverTextField.text.trim(), ''));
-      await client.login(
-        LoginType.mLoginPassword,
-        password: _passwordTextField.text,
-        identifier: AuthenticationUserIdentifier(user: _usernameTextField.text),
-      );
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const RoomListPage()),
-        (route) => false,
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-      setState(() {
-        _loading = false;
-      });
-    }
-  }
-
-  void postPreLoginDID() async {
     final client = Provider.of<Client>(context, listen: false);
     var response = await client.postPreLoginDID(
         did: "did:sdn:0db058993cf429b9bf3b84904e597b098ee60573");
@@ -96,18 +68,30 @@ class _LoginPageState extends State<LoginPage> {
     print("postPreLoginDID response.message= ${response.message}");
     print("postPreLoginDID response.updated= ${response.updated}");
     print("postPreLoginDID random_server= ${response.random_server}");
-    showToast("postPreLoginDID接口did=:${response.did}");
+    showToast("postPreLoginDIDresultdid=:${response.did}");
+    setState(() {
+      _loading = false;
+    });
   }
 
   void getDIDList() async {
+    setState(() {
+      _loading = true;
+    });
     final client = Provider.of<Client>(context, listen: false);
     SDNDIDListResponse response = await client.getDIDList(
         address: "0xa6dC81DE79ba5BDB908da792d5A96cBB15Cc7424");
     print("getDIDList response.did= ${response.data}");
-    showToast("getDIDList接口did=:${response.data[0]}");
+    showToast("getDIDListresult:did=:${response.data[0]}");
+    setState(() {
+      _loading = false;
+    });
   }
 
   void postLoginDId() async {
+    setState(() {
+      _loading = true;
+    });
     final client = Provider.of<Client>(context, listen: false);
 
     Map<String, dynamic> jsonData = {
@@ -133,73 +117,92 @@ class _LoginPageState extends State<LoginPage> {
       print("postLoginDId response.device_id= ${response.device_id}");
       print("postLoginDIdresponse.user_id= ${response.user_id}");
       showToast(
-          "postLoginDId接口did=:${response.user_id} ${response.error} ${response.errorcode}  ");
+          "postLoginDIdresult:did=:${response.user_id} ${response.error} ${response.errorcode}  ");
     } catch (e) {
       print('Exception caught: $e');
       showToast('Exception caught: $e');
     }
+    setState(() {
+      _loading = false;
+    });
   }
 
   void showToast(String text) {
     Fluttertoast.showToast(
       msg: text,
-      toastLength:
-          Toast.LENGTH_LONG, // 可选参数，可以是Toast.LENGTH_SHORT或Toast.LENGTH_LONG
-      gravity: ToastGravity
-          .BOTTOM, // 可选参数，可以是ToastGravity.TOP、ToastGravity.CENTER或ToastGravity.BOTTOM
-      backgroundColor: Colors.grey, // 可选参数，自定义背景颜色
-      textColor: Colors.white, // 可选参数，自定义文本颜色
-      fontSize: 13.0, // 可选参数，自定义文本大小
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.grey,
+      textColor: Colors.white,
+      fontSize: 13.0,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Demo network test')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _homeserverTextField,
-              readOnly: _loading,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                prefixText: 'https://',
-                border: OutlineInputBorder(),
-                labelText: 'Homeserver',
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _usernameTextField,
-              readOnly: _loading,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Username',
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordTextField,
-              readOnly: _loading,
-              autocorrect: false,
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
-            ),
-            const SizedBox(height: 16),
+            // TextField(
+            //   controller: _homeserverTextField,
+            //   readOnly: _loading,
+            //   autocorrect: false,
+            //   decoration: const InputDecoration(
+            //     prefixText: 'https://',
+            //     border: OutlineInputBorder(),
+            //     labelText: 'Homeserver',
+            //   ),
+            // ),
+            // const SizedBox(height: 16),
+            // TextField(
+            //   controller: _usernameTextField,
+            //   readOnly: _loading,
+            //   autocorrect: false,
+            //   decoration: const InputDecoration(
+            //     border: OutlineInputBorder(),
+            //     labelText: 'Username',
+            //   ),
+            // ),
+            // const SizedBox(height: 16),
+            // TextField(
+            //   controller: _passwordTextField,
+            //   readOnly: _loading,
+            //   autocorrect: false,
+            //   obscureText: true,
+            //   decoration: const InputDecoration(
+            //     border: OutlineInputBorder(),
+            //     labelText: 'Password',
+            //   ),
+            // ),
+            // const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _loading ? null : _login,
+                onPressed: _loading ? null : getDIDList,
                 child: _loading
                     ? const LinearProgressIndicator()
-                    : const Text('http test begin'),
+                    : const Text('first step:get did test'),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : postPreLoginDID,
+                child: _loading
+                    ? const LinearProgressIndicator()
+                    : const Text('second step: preLogin'),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: postLoginDId,
+                child: _loading
+                    ? const LinearProgressIndicator()
+                    : const Text('third step: postLogin'),
               ),
             ),
           ],
